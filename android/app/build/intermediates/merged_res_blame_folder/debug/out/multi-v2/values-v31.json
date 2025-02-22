@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.pharmacy.app-mergeDebugResources-45:/values-v31/values-v31.xml",
+            "map": [
+                {
+                    "source": "D:\\ReactNative\\Onedrive\\pharmacy\\node_modules\\react-native-bootsplash\\android\\build\\intermediates\\packaged_res\\debug\\values-v31\\values-v31.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "389"
+                    }
+                }
+            ]
+        }
+    ]
+}
