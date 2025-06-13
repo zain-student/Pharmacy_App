@@ -30,7 +30,7 @@ import {UserContext} from 'app/utils/UserContext';
 import {MMKV} from 'react-native-mmkv';
 import KeepAwake from 'react-native-keep-awake';
 var net = require('react-native-tcp');
-const mmkvStorage = new MMKV();
+export const mmkvStorage = new MMKV();
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator

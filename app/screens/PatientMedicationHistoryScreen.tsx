@@ -193,12 +193,13 @@ export const PatientMedicationHistoryScreen: FC<
       })}
     </TouchableOpacity>
   );
-
+  
   const PatientItem = ({title}) => (
     <TouchableOpacity
-      // onPress={()=>onItemPress(title)}
-      style={$patientItemView}>
+    // onPress={()=>onItemPress(title)}
+    style={$patientItemView}>
       <View style={$patientItemTitleView}>
+      { console.log("Title:",title)}
         <Text testID="login-heading" preset="bold" style={$patientTitleText}>
           {title.EnteredOn ? formatDate(title.EnteredOn) : ' '}
         </Text>
@@ -223,11 +224,11 @@ export const PatientMedicationHistoryScreen: FC<
           style={[$grayBackgroundText, {color: colors.themeText}]}>
           {
             // "Drug: " +
-            title.DrugName
+            title.DrugName+"    | "+title.Quantity
           }
         </Text>
       </View>
-      {/* <View
+      <View
         style={[
           $patientItemGrayViewStyle,
           // {padding: spacing.xs}
@@ -235,16 +236,18 @@ export const PatientMedicationHistoryScreen: FC<
         <Text testID="login-heading" preset="bold" style={$grayBackgroundText}>
           {'Provider: ' + title.ProviderName}
         </Text>
-      </View> */}
-      {/* <View style={[$patientItemGrayViewStyle, {height: 100}]}>
+      </View>
+      <View style={[$patientItemGrayViewStyle, {height: 100}]}>
         <Text
           numberOfLines={2}
           testID="login-heading"
           preset="bold"
           style={$grayBackgroundText}>
-          {'Directions: ' + title.DirectionToPatient}
+          {'Directions: ' + (title?.DirectionToPatient ?? 'N/A')}
         </Text>
-      </View> */}
+      </View>
+
+    
       {/* <View
         style={[
           $patientItemGrayViewStyle,
@@ -254,8 +257,8 @@ export const PatientMedicationHistoryScreen: FC<
         <Text testID="login-heading" preset="bold" style={$grayBackgroundText}>
           {"Taken by: " + title.PharmacyName}
         </Text>
-      </View> */}
-      {/* <View style={[$patientItemDetailView, { padding: spacing.sm }]}>
+      </View> 
+       <View style={[$patientItemDetailView, { padding: spacing.sm }]}>
         <Text testID="login-heading" preset="bold" style={$patientsText}>
           {title.Name}
         </Text>
@@ -273,11 +276,11 @@ export const PatientMedicationHistoryScreen: FC<
   }
 
   function addNewPress() {
-    // (async function load() {
-    //   setIsLoading(true);
-    //   await stockStore.fetchStocks();
-    //   setIsLoading(false);
-    // })();
+    (async function load() {
+      setIsLoading(true);
+      await stockStore.fetchStocks();
+      setIsLoading(false);
+    })();
 
     navigation.navigate('AddNewMedications');
   }
@@ -298,6 +301,7 @@ export const PatientMedicationHistoryScreen: FC<
       {console.log(
         '..........User...',
         user.length > 0 ? user[0].FullName : '',
+       
       )}
       <Header
         LeftActionComponent={
@@ -317,14 +321,31 @@ export const PatientMedicationHistoryScreen: FC<
       >
         <Profile />
         {/* <Text preset="heading" tx="medicationsHistoryScreen.medicationsHistoryScreen" style={$title} /> */}
-        <View style={$patientsListView}>
+        {/* <View style={$patientsListView}>
           <FlatList
             data={patientStore.getSelectedPatient()[0].Medications}
             style={{flex: 1}}
             extraData={orderStore.ordersForList}
             renderItem={({item}) => <PatientItem title={item} />}
             keyExtractor={item => item.Id}
-          />
+          /> */}
+<View style={$patientsListView}>
+  {patientStore.getSelectedPatient().length > 0 &&
+  patientStore.getSelectedPatient()[0].Medications ? (
+    <FlatList
+      data={patientStore.getSelectedPatient()[0].Medications}
+      style={{flex: 1}}
+      extraData={orderStore.ordersForList}
+      renderItem={({item}) => <PatientItem title={item} />}
+      keyExtractor={item => item.Id}
+    />
+  ) : (
+    <Text style={{textAlign: 'center', marginTop: 20}}>
+      No medication history found.
+    </Text>
+  )}
+</View>
+
           {/* {currentPatient.length > 0 &&
           currentPatient[0].Medications &&
           currentPatient[0].Medications.length > 0 ? (
@@ -336,7 +357,7 @@ export const PatientMedicationHistoryScreen: FC<
               // keyExtractor={item => item.PatientId}
             />
           ) : null} */}
-        </View>
+        {/* </View> */}
         {isLoading ? <ActivityIndicator /> : null}
         <View style={$buttonsView}>
           <Button

@@ -331,6 +331,7 @@ export const LandingScreen: FC<LandingScreenProps> = observer(function LandingSc
             style={[$welcomeTextStyle]}
           />
         </View>
+
         {/* <View style={{ alignSelf: 'flex-end'}}>
        <ClickableText
           testID="login-button"
@@ -341,6 +342,8 @@ export const LandingScreen: FC<LandingScreenProps> = observer(function LandingSc
         />
       </View> */}
         <View style={$loginButtonView}>
+          <Text style={{fontSize:12,color:'white', alignSelf:'center'}}>Version: 2.0.0</Text>
+              <Text style={{fontSize:12,color:'white', alignSelf:'center'}}>Published: 28 May,2025</Text>
           <Button
             testID="login-button"
             tx="landingScreen.signIn"

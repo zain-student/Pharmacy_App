@@ -135,11 +135,11 @@ export const TodaysPatientsScreen: FC<HomeTabScreenProps<'TodaysPatients'>> =
 
     const load = async item => {
       console.warn('running', item);
-      // setIsLoading(true);
-      // await orderStore.fetchOrders(item.PatientId);
-      // console.warn('here');
-      // await stockStore.fetchStocks();
-      // setIsLoading(false);
+      setIsLoading(true);
+      await orderStore.fetchOrders(item.PatientId);
+      console.warn('here');
+      await stockStore.fetchStocks();
+      setIsLoading(false);
       navigation.navigate('Patient');
     };
 

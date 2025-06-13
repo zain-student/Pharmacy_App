@@ -4,7 +4,7 @@
             "outputFile": "com.pharmacy.app-mergeReleaseResources-43:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "/Users/muhammadahmad/ahmad/ReactNative/Onedrive/pharmacy/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/release/values-v30/values-v30.xml",
+                    "source": "C:\\Users\\hp\\Desktop\\OFFLINE APPS\\pharmacy_app\\node_modules\\react-native-bootsplash\\android\\build\\intermediates\\packaged_res\\release\\values-v30\\values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
