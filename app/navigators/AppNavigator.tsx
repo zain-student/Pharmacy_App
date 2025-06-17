@@ -16,12 +16,12 @@ import {
 } from '@react-navigation/native-stack';
 import {observer} from 'mobx-react-lite';
 import React, {useEffect, useState} from 'react';
-import {useColorScheme} from 'react-native';
+import {Alert, useColorScheme} from 'react-native';
 import * as Screens from 'app/screens';
 import Config from '../config';
 import {useStores} from '../models'; // @demo remove-current-line
 import {DemoNavigator, DemoTabParamList} from './DemoNavigator'; // @demo remove-current-line
-import {HomeNavigator, HomeTabParamList} from './HomeNavigator';
+import {HomeNavigator, HomeTabParamList} from './HomeNavigator'; 
 import {navigationRef, useBackButtonHandler} from './navigationUtilities';
 import {colors} from 'app/theme';
 import {PatientNavigator, PatientStackParamList} from './PatientNavigator';
@@ -29,6 +29,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UserContext} from 'app/utils/UserContext';
 import {MMKV} from 'react-native-mmkv';
 import KeepAwake from 'react-native-keep-awake';
+import { authenticationStore } from '../models/AuthenticationStore';
 var net = require('react-native-tcp');
 export const mmkvStorage = new MMKV();
 
@@ -92,9 +93,21 @@ const AppStack = observer(function AppStack() {
           mmkvStorage.getString('successResponses'),
         );
       }
+        // 🔐 Restore auth token and set API header
+    const savedToken = mmkvStorage.getString('authToken');
+    if (savedToken) {
+            console.log('Restoring token on app start:', savedToken);
+      authenticationStore.setAuthToken(savedToken); // Store in MST
+      authenticationStore.distributeAuthToken(savedToken); // Set API header
+      // api.setToken(savedToken); // <-- 💥 this is now required
+    }else{
+       console.warn('No saved token found in MMKV');
+    }
+
       console.warn('initiatings');
       global.connectionEstabished = false;
       initiateConnection();
+      // Alert.alert('receivedData', JSON.stringify(receivedData));
     } catch (e) {}
   }, []);
 
@@ -144,6 +157,7 @@ const AppStack = observer(function AppStack() {
         try {
           let receivedData = JSON.parse(data);
           console.log('Client Received: ' + receivedData);
+          Alert.alert('receivedData',JSON.stringify(receivedData));
           if (receivedData && receivedData.receiver === 'pharmacy') {
             if (receivedData.type === 'resp_success') {
               if (receivedData.from === 'receptionist') {
@@ -190,8 +204,9 @@ const AppStack = observer(function AppStack() {
               }
             } else {
               console.warn('receivedData', receivedData);
+              Alert.alert('receivedData', JSON.stringify(receivedData));
               let medications: any = receivedData.Medications.map(itm => {
-                let splitArray = itm.split(':');
+                let splitArray = itm.split('|||');
                 return {
                   MedicineId: splitArray[0],
                   DrugName: splitArray[1],
@@ -204,6 +219,29 @@ const AppStack = observer(function AppStack() {
                   PatientId: receivedData.PatientId,
                 };
               });
+//               let medications: any = receivedData.Medications.map(itm => {
+//   if (typeof itm === 'string') {
+//     const parts = itm.split(':');
+//     return {
+//       MedicineId: parts[0],
+//       DrugName: parts[1],
+//       Quantity: parts[2],
+//       EnteredOn: parts[3],
+//       OrderNumber: parts[4],
+//       ProviderName: parts[5],
+//       DirectionToPatient: parts[6],
+//       Dispatched: false,
+//       PatientId: receivedData.PatientId,
+//     };
+//   } else {
+//     return {
+//       ...itm,
+//       Dispatched: false,
+//       PatientId: receivedData.PatientId,
+//     };
+//   }
+// });
+
               console.warn('meds', medications);
               let temp = {
                 PatientId: receivedData.PatientId,
@@ -236,6 +274,38 @@ const AppStack = observer(function AppStack() {
                 Vitals: [],
                 Medications: medications,
               };
+//               let temp = {
+//   PatientId: receivedData.PatientId ?? '',
+//   FirstName: receivedData.FirstName ?? '',
+//   LastName: receivedData.LastName ?? '',
+//   MRNNo: receivedData.MRNNo ?? '',
+//   DOB: receivedData.DOB ?? '',
+//   CNIC: '',
+//   CellPhoneNumber: '',
+//   Gender: receivedData.Gender ?? '',
+//   SiteName: '',
+//   MartialStatus: '',
+//   SpouseName: '',
+//   ZakatEligible: false,
+//   Country: 'Pakistan',
+//   City: '',
+//   Province: '',
+//   Address: '',
+//   EnteredOn: '',
+//   Services: [],
+
+//   Status: receivedData.status ?? 'Prescription',
+//   CheckInTime: receivedData.CheckInTime ?? '',
+//   VitalsTime: receivedData.VitalsTime ?? '',
+//   PrescriptionTime: receivedData.PrescriptionTime ?? '',
+//   PharmacyTime: '',
+
+//   CheckInSynced: false,
+//   NursingNote: '',
+//   Vitals: [],
+//   Medications: medications,
+// };
+
               patientStore.addNewPatient(temp);
               setTimeout(() => {
                 setRefreshData(!refreshData);

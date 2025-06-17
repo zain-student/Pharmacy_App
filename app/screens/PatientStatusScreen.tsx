@@ -241,7 +241,7 @@ export const PatientStatusScreen: FC<HomeTabScreenProps<'PatientStatus'>> =
         </View>
         <View style={[$patientItemDetailView, {padding: spacing.sm}]}>
           <Text testID="login-heading" preset="bold" style={$patientsText}>
-            {title.FirstName}
+            {title.FirstName +" "+title.LastName}
           </Text>
           <Text testID="login-heading" preset="default" style={$patientsText}>
             {

@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useState} from 'react';
+import React, {FC, useCallback, useContext, useState,useEffect} from 'react';
 import {
   TouchableOpacity,
   Image,
@@ -7,6 +7,8 @@ import {
   View,
   ViewStyle,
   FlatList,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import {Header, Button, ListItem, Screen, Text} from '../components';
 import {HomeTabScreenProps} from '../navigators/HomeNavigator';
@@ -120,6 +122,22 @@ export const TodaysPatientsScreen: FC<HomeTabScreenProps<'TodaysPatients'>> =
     const [open, setOpen] = useState(false);
     const [refresh, setRefresh] = useState('1');
     const userContext = useContext(UserContext);
+    // This will load the data to reduce the time taken to open the patient 
+useEffect(() => {
+  const preloadData = async () => {
+    console.log('⏳ Preloading stocks...');
+    try {
+      await stockStore.fetchStocks(); // Uses cached stocks if already loaded
+      console.log('✅ Stocks preloaded');
+    } catch (error) {
+      console.error('❌ Failed to preload stocks:', error);
+    }
+  };
+
+  preloadData();
+}, []);
+
+//...............................................................
 
     useFocusEffect(
       useCallback(() => {
@@ -127,25 +145,88 @@ export const TodaysPatientsScreen: FC<HomeTabScreenProps<'TodaysPatients'>> =
       }, [userContext.refreshData]),
     );
 
-    function onItemPress(item: any) {
+    function onItemPress(item: any, index: number) {
       console.log('-=-=-=-=-=-=-=', item);
       patientStore.selectAPatient(item);
       load(item);
     }
+const load = async item => {
+  console.warn('running', item);
+  setIsLoading(true);
+  
+  try {
+    ToastAndroid.show("Fetching Patient..", ToastAndroid.SHORT);
+    await orderStore.fetchOrders(Number(item.PatientId));
+    console.warn('Orders fetched');
+    ToastAndroid.show("Fetching Stocks..", ToastAndroid.SHORT);
 
-    const load = async item => {
-      console.warn('running', item);
-      setIsLoading(true);
-      await orderStore.fetchOrders(item.PatientId);
-      console.warn('here');
-      await stockStore.fetchStocks();
-      setIsLoading(false);
-      navigation.navigate('Patient');
-    };
+    await stockStore.fetchStocks();
+    console.warn('Stocks fetched');
+
+    navigation.navigate('Patient');
+  } catch (error) {
+    console.error('❌ Failed to load patient data:', error);
+    ToastAndroid.show("Something went wrong!", ToastAndroid.LONG);
+  } finally {
+    setIsLoading(false);
+    ToastAndroid.show("Jumped into Finally...",ToastAndroid.SHORT);
+  }
+};
+
+    // const load = async item => {
+    //   console.warn('running', item);
+    //   // Alert.alert('running', item);
+    //   setIsLoading(true);
+    //   ToastAndroid.show("Fetching Patient..", ToastAndroid.SHORT); 
+    //   await orderStore.fetchOrders(item.PatientId);
+    //   console.warn('here');
+    //   //  Alert.alert('here');
+    //   ToastAndroid.show("Fetching Stocks..", ToastAndroid.SHORT);
+    //   await stockStore.fetchStocks();
+    //   //  Alert.alert('here2');
+    //   setIsLoading(false);
+    //   navigation.navigate('Patient');
+    // };
+//     const load = async (item) => {
+//   console.warn('running', item);
+//   setIsLoading(true);
+//   const start = Date.now();
+//   try {
+//     console.warn('⏱ Fetching orders...');
+//     await orderStore.fetchOrders(item.PatientId);
+//     console.warn('✅ Orders fetched in', Date.now() - start, 'ms');
+
+//     const stockStart = Date.now();
+//     await stockStore.fetchStocks();
+//     console.warn('✅ Stocks fetched in', Date.now() - stockStart, 'ms');
+
+//     navigation.navigate('Patient');
+//   } catch (e) {
+//     console.error('Error during load:', e);
+//     ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
+// const load = async (item) => {
+//   console.warn('running', item);
+//   setIsLoading(true);
+//   try {
+//     await orderStore.fetchOrders(item.PatientId);  // Can return unauthorized
+//     await stockStore.fetchStocks();
+//     navigation.navigate('Patient');
+//   } catch (e) {
+//     console.error('Error during load:', e);
+//     ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
+//   } finally {
+//     setIsLoading(false); // Always stop loading
+//   }
+// };
 
     const PatientItem = ({title, index}) => (
       <TouchableOpacity
-        onPress={() => onItemPress(title)}
+        onPress={() => onItemPress(title,index)}
         style={$patientItemView}>
         <View style={$patientItemTitleView}>
           <Text testID="login-heading" preset="bold" style={$patientTitleText}>

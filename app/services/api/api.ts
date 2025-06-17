@@ -27,6 +27,7 @@ import type {UserSnapshotIn} from 'app/models/User';
 import type {LoginSnapshotIn} from 'app/models/Login';
 import type {OrderSnapshotIn} from 'app/models/Order';
 import type {StockSnapshotIn} from 'app/models/Stock';
+import { AuthenticationStoreModel } from 'app/models/AuthenticationStore';
 
 /**
  * Configuring the apisauce instance.
@@ -57,6 +58,10 @@ export class Api {
       },
     });
   }
+// setToken(token: string) {
+//   this.apisauce.setHeader('Authorization', `Bearer ${token}`);
+//   console.log('🔐 Auth header set to:', token); // Optional debug
+// }
 
   // @demo remove-block-start
   /**
@@ -227,9 +232,7 @@ export class Api {
   /**
    * Gets a list of patient orders.
    */
-  async getOrders(
-    patientId,
-  ): Promise<{kind: 'ok'; orders: OrderSnapshotIn[]} | GeneralApiProblem> {
+  async getOrders(patientId): Promise<{kind: 'ok'; orders: OrderSnapshotIn[]} | GeneralApiProblem> {
     // make the api call
     const response: ApiResponse<OrderApiFeedResponse> = await this.apisauce.get(
       `api/Patient/GetAllPatientOrdersByPatientId?PatientId=` + patientId,
@@ -245,7 +248,9 @@ export class Api {
 
     // transform the data into the format we are expecting
     try {
-      const rawData = response.data.data[0];
+      // const rawData = response.data.data[0];
+      const rawData = response?.data?.data?.[0] ?? [];
+
       console.log('Order Api Raw Data....', rawData);
 
       // This is where we transform the data into the shape we expect for our MST model.
@@ -288,6 +293,7 @@ export class Api {
     try {
       const rawData = response.data.data[0];
       console.log('Stock Api Raw Data....', rawData);
+console.log('Stock length:', rawData.length);
 
       // This is where we transform the data into the shape we expect for our MST model.
 

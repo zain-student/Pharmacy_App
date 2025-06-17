@@ -2,6 +2,7 @@ import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { LoginModel } from "./Login"
 import { UserModel } from "./User"
+import { mmkvStorage } from "../navigators/AppNavigator";
 
 export const AuthenticationStoreModel = types
   .model("AuthenticationStore")
@@ -42,7 +43,8 @@ export const AuthenticationStoreModel = types
       }
     },
     setAuthToken(value?: string) {
-      store.authToken = value
+      if (value) mmkvStorage.set('authToken', value);
+      store.authToken = value;
     },
     setAuthEmail(value: string) {
       store.authEmail = value.replace(/ /g, "")

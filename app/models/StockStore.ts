@@ -13,17 +13,40 @@ export const StockStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((store) => ({
-    async fetchStocks() {
-      const response = await api.getStocks()
-      if (response.kind === "ok") {
-        store.setProp("stocks", response.stocks)
-        console.log('response stocks.....', response.stocks)
-        console.log('response store.....', store)
-        console.log('response stores stocks.....', store.stocks)
-      } else {
-        console.tron.error(`Error fetching stocks: ${JSON.stringify(response)}`, [])
-      }
-    },
+//     async fetchStocks() {
+//       // const response = await api.getStocks()
+//       const apiStart = Date.now();
+// const response = await api.getStocks();
+// console.warn('📡 API getStocks time:', Date.now() - apiStart, 'ms');
+
+//       if (response.kind === "ok") {
+//         store.setProp("stocks", response.stocks)
+//         console.log('response stocks.....', response.stocks)
+//         console.log('response store.....', store)
+//         console.log('response stores stocks.....', store.stocks)
+//       } else {
+//         console.tron.error(`Error fetching stocks: ${JSON.stringify(response)}`, [])
+//       }
+//     },
+async fetchStocks(force = false) {
+  // ✅ Skip API call if already loaded unless forced
+  if (!force && store.stocks.length > 0) {
+    console.log('✅ Using cached stocks');
+    return;
+  }
+
+  const apiStart = Date.now();
+  const response = await api.getStocks();
+  console.warn('📡 API getStocks time:', Date.now() - apiStart, 'ms');
+
+  if (response.kind === 'ok') {
+    store.setProp('stocks', response.stocks);
+    console.log('✅ Fetched stocks:', response.stocks.length);
+  } else {
+    console.tron.error(`❌ Error fetching stocks: ${JSON.stringify(response)}`, []);
+  }
+},
+
     selectStock( stock: Stock){
       store.selectedStock.push(stock)
     },
