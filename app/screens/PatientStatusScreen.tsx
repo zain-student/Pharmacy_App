@@ -639,7 +639,7 @@ export const PatientStatusScreen: FC<HomeTabScreenProps<'PatientStatus'>> =
           <View style={$patientsListView}>
             <FlatList
               // data={patientQueue}
-              data={patientsForList}
+              data={patientsForList.filter(item=>item.isUserAdded)}
               key={refresh}
               // style={$patientsListView}
               extraData={patientsForList}

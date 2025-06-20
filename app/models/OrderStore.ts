@@ -18,8 +18,8 @@ export const OrderStoreModel = types
       // console.log('Token in use:', authStore.token);
 console.warn('🔍 patientId type:', typeof patientId, '| value:', patientId);
 console.warn('🔍 Number(patientId):', Number(patientId));
-ToastAndroid.show(`Type: ${typeof patientId}, Value: ${patientId}`, ToastAndroid.LONG);
-ToastAndroid.show(`Number(patientId): ${Number(patientId)}`, ToastAndroid.LONG);
+// ToastAndroid.show(`Type: ${typeof patientId}, Value: ${patientId}`, ToastAndroid.LONG);
+// ToastAndroid.show(`Number(patientId): ${Number(patientId)}`, ToastAndroid.LONG);
 
       const response = await api.getOrders(Number(patientId));
       // if (response.kind === "ok") {
@@ -31,7 +31,7 @@ ToastAndroid.show(`Number(patientId): ${Number(patientId)}`, ToastAndroid.LONG);
         console.log('response stores orders.....', store.orders);
       } else if (response.kind === 'unauthorized') {
         console.log('-=-=-=-=-=-=-=-=data', response);
-        ToastAndroid.show('Authorization Failed! Please Login again', ToastAndroid.SHORT);
+        // ToastAndroid.show('Authorization Failed! Please Login again', ToastAndroid.SHORT);
       } else {
         console.log('-=-=-=-=-=-=-=-=data', response);
         console.tron.error(
@@ -57,7 +57,7 @@ ToastAndroid.show(`Number(patientId): ${Number(patientId)}`, ToastAndroid.LONG);
     get ordersForList() {
       // return store.favoritesOnly ? store.favorites : store.orders
       console.log('Store Orders...... in View', store);
-      ToastAndroid.show('Store Orders...... in View',ToastAndroid.SHORT)
+      // ToastAndroid.show('Store Orders...... in View',ToastAndroid.SHORT)
       return store.orders;
     },
     // get selectedOrder(){

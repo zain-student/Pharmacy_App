@@ -155,10 +155,10 @@ const load = async item => {
   setIsLoading(true);
   
   try {
-    ToastAndroid.show("Fetching Patient..", ToastAndroid.SHORT);
+    // ToastAndroid.show("Fetching Patient..", ToastAndroid.SHORT);
     await orderStore.fetchOrders(Number(item.PatientId));
     console.warn('Orders fetched');
-    ToastAndroid.show("Fetching Stocks..", ToastAndroid.SHORT);
+    // ToastAndroid.show("Fetching Stocks..", ToastAndroid.SHORT);
 
     await stockStore.fetchStocks();
     console.warn('Stocks fetched');
@@ -169,7 +169,7 @@ const load = async item => {
     ToastAndroid.show("Something went wrong!", ToastAndroid.LONG);
   } finally {
     setIsLoading(false);
-    ToastAndroid.show("Jumped into Finally...",ToastAndroid.SHORT);
+    // ToastAndroid.show("Jumped into Finally...",ToastAndroid.SHORT);
   }
 };
 
@@ -303,7 +303,7 @@ const load = async item => {
         >
           <View style={$patientsListView}>
             <FlatList
-              data={patientStore.patientsForList}
+              data={patientStore.patientsForList.filter(item=>item.isUserAdded)}
               extraData={patientStore.patientsForList}
               key={refresh}
               renderItem={({item, index}) => {

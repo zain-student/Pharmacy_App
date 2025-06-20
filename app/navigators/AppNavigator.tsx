@@ -157,7 +157,7 @@ const AppStack = observer(function AppStack() {
         try {
           let receivedData = JSON.parse(data);
           console.log('Client Received: ' + receivedData);
-          Alert.alert('receivedData',JSON.stringify(receivedData));
+          // Alert.alert('receivedData',JSON.stringify(receivedData));
           if (receivedData && receivedData.receiver === 'pharmacy') {
             if (receivedData.type === 'resp_success') {
               if (receivedData.from === 'receptionist') {
@@ -185,26 +185,66 @@ const AppStack = observer(function AppStack() {
             } catch (e) {}
             let isCheckoutSync = receivedData.isCheckoutSync;
             receivedData = receivedData.payload;
+            // let item = patientStore.patientsForList.find(
+            //   patient => patient.PatientId === receivedData.PatientId,
+            // );
+            // console.warn('item::', item);
+            // if (item) {
+            //   if (isCheckoutSync) {
+            //     let indexToFind = patientStore.patientsForList.findIndex(
+            //       patient => patient.PatientId === receivedData.PatientId,
+            //     );
+            //     patientStore.addCheckedOutSynced(
+            //       indexToFind,
+            //       receivedData.CheckoutTime,
+            //     );
+            //     setTimeout(() => {
+            //       setRefreshData(!refreshData);
+            //     }, 1000);
+            //   }
+            // } else {
             let item = patientStore.patientsForList.find(
-              patient => patient.PatientId === receivedData.PatientId,
-            );
-            console.warn('item::', item);
-            if (item) {
-              if (isCheckoutSync) {
-                let indexToFind = patientStore.patientsForList.findIndex(
-                  patient => patient.PatientId === receivedData.PatientId,
-                );
-                patientStore.addCheckedOutSynced(
-                  indexToFind,
-                  receivedData.CheckoutTime,
-                );
-                setTimeout(() => {
-                  setRefreshData(!refreshData);
-                }, 1000);
-              }
-            } else {
+  patient => patient.PatientId === receivedData.PatientId,
+);
+console.warn('item::', item);
+
+if (item) {
+  let indexToFind = patientStore.patientsForList.findIndex(
+    patient => patient.PatientId === receivedData.PatientId,
+  );
+
+  // Merge updated fields into existing patient
+  const updatedPatient = {
+    ...item,
+    FirstName: receivedData.FirstName ?? item.FirstName,
+    LastName: receivedData.LastName ?? item.LastName,
+    MRNNo: receivedData.MRNNo ?? item.MRNNo,
+    DOB: receivedData.DOB ?? item.DOB,
+    Gender: receivedData.Gender ?? item.Gender,
+    Country: receivedData.Country ?? item.Country,
+    City: receivedData.City ?? item.City,
+    Province: receivedData.Province ?? item.Province,
+    EmergencyContactName: receivedData.EmergencyContactName ?? item.EmergencyContactName,
+    EmergencyContactPhone: receivedData.EmergencyContactPhone ?? item.EmergencyContactPhone,
+    EmergencyContactRelationship: receivedData.EmergencyContactRelationship ?? item.EmergencyContactRelationship,
+    isUserAdded: receivedData.isUserAdded ?? item.isUserAdded,
+  };
+
+  patientStore.setPatients(indexToFind, updatedPatient, 'receptionist');
+  ToastAndroid.show('Patient info updated in Pharmacy App', ToastAndroid.SHORT);
+
+  if (isCheckoutSync) {
+    patientStore.addCheckedOutSynced(indexToFind, receivedData.CheckoutTime);
+  }
+
+  setTimeout(() => {
+    setRefreshData(!refreshData);
+  }, 1000);
+} else {
+  // existing logic to add a new patient...
+
               console.warn('receivedData', receivedData);
-              Alert.alert('receivedData', JSON.stringify(receivedData));
+              // Alert.alert('receivedData', JSON.stringify(receivedData));
               let medications: any = receivedData.Medications.map(itm => {
                 let splitArray = itm.split('|||');
                 return {
@@ -273,6 +313,7 @@ const AppStack = observer(function AppStack() {
                 NursingNote: '',
                 Vitals: [],
                 Medications: medications,
+                isUserAdded: receivedData.isUserAdded ?? false,
               };
 //               let temp = {
 //   PatientId: receivedData.PatientId ?? '',
