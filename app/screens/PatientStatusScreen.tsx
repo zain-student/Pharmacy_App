@@ -197,7 +197,23 @@ export const PatientStatusScreen: FC<HomeTabScreenProps<'PatientStatus'>> =
     const onSyncPressed = (patientData: any) => {
       try {
         let tempPatient = JSON.parse(JSON.stringify(patientData));
-
+// 🛡️ Patch missing fields ONLY for API patients
+    if (!tempPatient.isUserAdded) {
+      tempPatient.MRN = tempPatient.MRN || '';
+      tempPatient.CheckInTime = tempPatient.CheckInTime || new Date().toISOString();
+      tempPatient.CheckInSynced = tempPatient.CheckInSynced ?? false;
+      tempPatient.Vitals = tempPatient.Vitals ?? [];
+      tempPatient.NursingNote = tempPatient.NursingNote ?? '';
+      tempPatient.EnteredOn = tempPatient.EnteredOn || '';
+      tempPatient.Country = tempPatient.Country || 'Pakistan';
+      tempPatient.City = tempPatient.City || '';
+      tempPatient.Province = tempPatient.Province || '';
+      tempPatient.Address = tempPatient.Address || '';
+      tempPatient.CellPhoneNumber = tempPatient.CellPhoneNumber || '';
+      tempPatient.CNIC = tempPatient.CNIC || '';
+      tempPatient.ZakatEligible = tempPatient.ZakatEligible ?? false;
+      tempPatient.SpouseName = tempPatient.SpouseName || '';
+    }
         if (userContext.clientSocket) {
           setIsLoading(true);
           userContext.clientSocket.write(
@@ -639,7 +655,8 @@ export const PatientStatusScreen: FC<HomeTabScreenProps<'PatientStatus'>> =
           <View style={$patientsListView}>
             <FlatList
               // data={patientQueue}
-              data={patientsForList.filter(item=>item.isUserAdded)}
+              // data={patientsForList.filter(item=>item.isUserAdded)}
+              data={patientsForList}
               key={refresh}
               // style={$patientsListView}
               extraData={patientsForList}

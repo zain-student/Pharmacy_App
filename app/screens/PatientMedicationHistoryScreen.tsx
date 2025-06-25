@@ -193,18 +193,18 @@ export const PatientMedicationHistoryScreen: FC<
       })}
     </TouchableOpacity>
   );
-  
+
   const PatientItem = ({title}) => (
     <TouchableOpacity
-    // onPress={()=>onItemPress(title)}
-    style={$patientItemView}>
+      // onPress={()=>onItemPress(title)}
+      style={$patientItemView}>
       <View style={$patientItemTitleView}>
-      { console.log("Title:",title)}
+        {console.log('Title:', title)}
         <Text testID="login-heading" preset="bold" style={$patientTitleText}>
           {title.EnteredOn ? formatDate(title.EnteredOn) : ' '}
         </Text>
       </View>
-      <View
+      {/* <View
         style={[
           $patientItemGrayViewStyle,
           // {padding: spacing.xs}
@@ -212,7 +212,7 @@ export const PatientMedicationHistoryScreen: FC<
         <Text testID="login-heading" preset="bold" style={$grayBackgroundText}>
           {'Order No: ' + title.OrderNumber}
         </Text>
-      </View>
+      </View> */}
       <View
         style={[
           $patientItemGrayViewStyle,
@@ -224,7 +224,7 @@ export const PatientMedicationHistoryScreen: FC<
           style={[$grayBackgroundText, {color: colors.themeText}]}>
           {
             // "Drug: " +
-            title.DrugName+"    | "+title.Quantity
+            title.DrugName + '    | ' + title.Quantity
           }
         </Text>
       </View>
@@ -247,7 +247,6 @@ export const PatientMedicationHistoryScreen: FC<
         </Text>
       </View>
 
-    
       {/* <View
         style={[
           $patientItemGrayViewStyle,
@@ -301,7 +300,6 @@ export const PatientMedicationHistoryScreen: FC<
       {console.log(
         '..........User...',
         user.length > 0 ? user[0].FullName : '',
-       
       )}
       <Header
         LeftActionComponent={
@@ -329,24 +327,24 @@ export const PatientMedicationHistoryScreen: FC<
             renderItem={({item}) => <PatientItem title={item} />}
             keyExtractor={item => item.Id}
           /> */}
-<View style={$patientsListView}>
-  {patientStore.getSelectedPatient().length > 0 &&
-  patientStore.getSelectedPatient()[0].Medications ? (
-    <FlatList
-      data={patientStore.getSelectedPatient()[0].Medications}
-      style={{flex: 1}}
-      extraData={orderStore.ordersForList}
-      renderItem={({item}) => <PatientItem title={item} />}
-      keyExtractor={item => item.Id}
-    />
-  ) : (
-    <Text style={{textAlign: 'center', marginTop: 20}}>
-      No medication history found.
-    </Text>
-  )}
-</View>
+        <View style={$patientsListView}>
+          {patientStore.getSelectedPatient().length > 0 &&
+          patientStore.getSelectedPatient()[0].Medications ? (
+            <FlatList
+              data={patientStore.getSelectedPatient()[0].Medications}
+              style={{flex: 1}}
+              extraData={orderStore.ordersForList}
+              renderItem={({item}) => <PatientItem title={item} />}
+              keyExtractor={item => item.Id}
+            />
+          ) : (
+            <Text style={{textAlign: 'center', marginTop: 20}}>
+              No medication history found.
+            </Text>
+          )}
+        </View>
 
-          {/* {currentPatient.length > 0 &&
+        {/* {currentPatient.length > 0 &&
           currentPatient[0].Medications &&
           currentPatient[0].Medications.length > 0 ? (
             <FlatList

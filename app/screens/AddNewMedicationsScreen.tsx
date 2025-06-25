@@ -190,6 +190,7 @@ export const AddNewMedicationsScreen: FC<
                   ? authenticationStore.login[0]?.FullName
                   : '',
               },
+              
             },
           }),
         );

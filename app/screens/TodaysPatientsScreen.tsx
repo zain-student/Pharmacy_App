@@ -303,7 +303,8 @@ const load = async item => {
         >
           <View style={$patientsListView}>
             <FlatList
-              data={patientStore.patientsForList.filter(item=>item.isUserAdded)}
+              // data={patientStore.patientsForList.filter(item=>item.isUserAdded)}
+              data={patientStore.patientsForList}
               extraData={patientStore.patientsForList}
               key={refresh}
               renderItem={({item, index}) => {
